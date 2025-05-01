@@ -1,11 +1,11 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
+// import { useState } from 'react'
+// import reactLogo from './assets/react.svg'
 // import viteLogo from '/vite.svg'
 import './App.css'
 import Register from './components/Register';
-import View from './components/view';
 import Update from './components/Update';
 import Delete from './components/Delete';
+import View from './components/view'
 
 
 function App() {
@@ -15,9 +15,8 @@ function App() {
     <h1 style={{backgroundColor:"black",color:"white",width:'100%'}}>CRUD FUNCTION APP</h1>
     <Register />
     <Update/>
+    <View/>
     <Delete/>
-    <View />
-    
   </div>
   )
 }

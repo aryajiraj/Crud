@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
-function View() {
+const View = () => {
   const [users, setUsers] = useState([]);
   useEffect(() => {
     viewdata();
@@ -27,10 +27,11 @@ function View() {
         </tr>
         {users.map((user) => (
           <tr key={user.id}>
-            <th>{user.id}</th>
-            <th>{user.name}</th>
-            <th>{user.age}</th>
-          </tr>
+          <td>{user.id}</td>
+          <td>{user.name}</td>
+          <td>{user.age}</td>
+        </tr>
+        
         ))}
       </table>
     </div>

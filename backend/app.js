@@ -1,67 +1,73 @@
 const express=require('express');
 const cors=require('cors');
+const database=require('./database');
+const student=require('./studentmodel');
 const fs=require('fs/promises');
 const app=express();
 const port=3000;
 const users=[]
+database();
 app.use(express.json())
 app.use(cors())
-const readdata=async()=>{
-    users=JSON.parse(await fs.readFile('data.json','utf-8'));
-}
+// const readdata=async()=>{
+//     users=JSON.parse(await fs.readFile('data.json','utf-8'));
+// }
 
-const writedata=async()=>{
-    await fs.writeFile('data.json',JSON.stringify(users));
-}
+// const writedata=async()=>{
+//     await fs.writeFile('data.json',JSON.stringify(users));
+// }
 
-app.get('/users',(req,res)=>{
-    console.log(users)
-    res.json(users);
+app.get('/users',async(req,res)=>{
+   // console.log(users)
+    // res.json(users);
+    try{
+        res.status(200).json(await student.find())
+    }catch(err){
+        res.status(500).json({message:err.message})
+    }
 });
 
-app.post('/users',(req,res)=>{
-    const newuser={
-        id:users.length+1,
-        name:req.body.name,
-        age:req.body.age
-    }
-    users.push(newuser);
-    console.log(users)
-    res.status(201).json({message:"data save"});
+
+app.post('/users',async(req,res)=>{
+//     const newuser={
+//         id:users.length+1,
+//         name:req.body.name,
+//         age:req.body.age
+//     }
+//     users.push(newuser);
+//     console.log(users)
+//     res.status(201).json({message:"data save"});
+try{
+    const sdata=req.body;
+    let id =parseInt(Math.random()*1000)
+    sdata.id=id;
+    await student.create(sdata)
+    res.status(200).json({message:"data add successfully"});
+}catch(err){
+    res.status(500).json({message:err.message})
+}
 })
-app.put('/users/:id/',(req,res) => {
+app.put('/users/:id/',async(req,res) => {
     const uid=req.params.id;
     const {name,age}=req.body;
-    const userIndex=users.findIndex(user=>user.id==uid);
-    if(!name || !age) {
-        res.status(400).json({message: 'name and age are required'});
-        return;
+    const data=await student.findOne({id:uid});
+    if(data==null){
+        res.json({message:' this id is not registered with us '});
     }
-    if(userIndex==-1){
-        console.log(userIndex)
-        res.status(404).json({message: 'user not found'});
-    }
-    else{
-        users[userIndex].name=name;
-        users[userIndex].age=age;
-        writedata();
-        res.status(200).json({message: 'user updated successfully',data: users[userIndex]});
-    }  
+    await data.updateOne({name:name, age:age});
+    res.json({message:'Data updated successfully!!! '});
 })
 
-app.delete('/users/:id',(req,res) => {
+app.delete('/users/:id',async(req,res) => {
     const uid=req.params.id;
-    const userIndex=users.findIndex(user=>user.id==uid);
-    if(userIndex==-1){
-        res.status(404).json({message: 'user not found'});
+    const data=await student.findOne({id:uid});
+    if(data==null){
+        res.json({message:'id not found to update '});
     }
-    else{
-        users.splice(userIndex,1);
-        writedata();
-        res.status(200).json({message: 'user deleted successfully',data: users[userIndex]});
-    }  
+    console.log(data);
+    await data.deleteOne();
+    res.json({message:' data deleted successfully'});
 })
-
 
 app.listen(port,()=>{
     console.log(`Server is running on at: ${port}`);

@@ -1,6 +1,6 @@
 import React from 'react'
 import axios from 'axios'
-const Delete = () => {
+function Delete(){
   const handleDelete = async (e) => {
     e.preventDefault()
     const id = e.target.id.value;
@@ -8,8 +8,8 @@ const Delete = () => {
     alert('Product deleted successfully')
   }
   return (
-    <div>
-      <h1>Delete Product</h1>
+    <div style={{ border: "2px solid green",padding:'20px' }}>
+      <h1 style={{ color: "red" }}>Delete Product</h1>
       <form onSubmit={handleDelete}>
         <input type="text" placeholder="Enter Product ID" name="id" />
         <button type="submit">Delete</button>
